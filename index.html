@@ -46,9 +46,9 @@
             video.style.display = 'block';
             video.play();
             
-            // When video ends, show image again
+            // When video ends, redirect to bigfoot.dev
             video.addEventListener('ended', function() {
-                showImage();
+                window.location.href = 'https://bigfoot.dev';
             });
         }
 
