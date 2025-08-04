@@ -11,16 +11,56 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            background-color: #fff;
         }
-        img {
+        img, video {
             max-width: 100%;
             max-height: 100vh;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+        img:hover {
+            opacity: 0.8;
+        }
+        #motylVideo {
+            display: none;
+        }
+        #motylImage {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <a href="https://bigfoot.dev" target="_blank">
-        <img src="images/motyl.jpg" alt="motyl">
-    </a>
+    <img src="images/motyl.jpg" alt="motyl" id="motylImage" onclick="playVideo()">
+    <video id="motylVideo" onclick="showImage()" muted>
+        <source src="video/motyl.mov" type="video/quicktime">
+        Your browser does not support the video tag.
+    </video>
+
+    <script>
+        function playVideo() {
+            const image = document.getElementById('motylImage');
+            const video = document.getElementById('motylVideo');
+            
+            image.style.display = 'none';
+            video.style.display = 'block';
+            video.play();
+            
+            // When video ends, show image again
+            video.addEventListener('ended', function() {
+                showImage();
+            });
+        }
+
+        function showImage() {
+            const image = document.getElementById('motylImage');
+            const video = document.getElementById('motylVideo');
+            
+            video.pause();
+            video.currentTime = 0;
+            video.style.display = 'none';
+            image.style.display = 'block';
+        }
+    </script>
 </body>
 </html>
