@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>motyl</title>
+    <link rel="icon" type="image/jpeg" href="images/motyl.jpg">
     <style>
         body {
             display: flex;
@@ -16,9 +17,6 @@
         img, video {
             max-width: 100%;
             max-height: 100vh;
-            width: auto;
-            height: auto;
-            object-fit: contain;
             cursor: pointer;
             transition: opacity 0.3s ease;
         }
@@ -36,7 +34,7 @@
 <body>
     <img src="images/motyl.jpg" alt="motyl" id="motylImage" onclick="playVideo()">
     <video id="motylVideo" onclick="showImage()" muted>
-        <source src="video/motyl.mp4" type="video/mp4">
+        <source src="video/motyl.mov" type="video/quicktime">
         Your browser does not support the video tag.
     </video>
 
@@ -45,33 +43,14 @@
             const image = document.getElementById('motylImage');
             const video = document.getElementById('motylVideo');
             
-            // Remove any existing event listeners to prevent duplicates
-            video.removeEventListener('ended', handleVideoEnd);
-            video.removeEventListener('error', handleVideoError);
-            
             image.style.display = 'none';
             video.style.display = 'block';
+            video.play();
             
-            // Add event listeners
-            video.addEventListener('ended', handleVideoEnd);
-            video.addEventListener('error', handleVideoError);
-            
-            // Try to play the video
-            const playPromise = video.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.error('Video play failed:', error);
-                });
-            }
-        }
-
-        function handleVideoEnd() {
-            console.log('Video ended, redirecting to bigfoot.dev');
-            window.location.href = 'https://bigfoot.dev';
-        }
-
-        function handleVideoError() {
-            console.error('Video error occurred');
+            // When video ends, redirect to bigfoot.dev
+            video.addEventListener('ended', function() {
+                window.location.href = 'https://bigfoot.dev';
+            });
         }
 
         function showImage() {
@@ -83,12 +62,6 @@
             video.style.display = 'none';
             image.style.display = 'block';
         }
-
-        // Ensure video is loaded when page loads
-        window.addEventListener('load', function() {
-            const video = document.getElementById('motylVideo');
-            video.load();
-        });
     </script>
 </body>
 </html>
