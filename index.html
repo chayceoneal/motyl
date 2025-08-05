@@ -17,6 +17,9 @@
         img, video {
             max-width: 100%;
             max-height: 100vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
             cursor: pointer;
             transition: opacity 0.3s ease;
         }
@@ -43,14 +46,33 @@
             const image = document.getElementById('motylImage');
             const video = document.getElementById('motylVideo');
             
+            // Remove any existing event listeners to prevent duplicates
+            video.removeEventListener('ended', handleVideoEnd);
+            video.removeEventListener('error', handleVideoError);
+            
             image.style.display = 'none';
             video.style.display = 'block';
-            video.play();
             
-            // When video ends, redirect to bigfoot.dev
-            video.addEventListener('ended', function() {
-                window.location.href = 'https://bigfoot.dev';
-            });
+            // Add event listeners
+            video.addEventListener('ended', handleVideoEnd);
+            video.addEventListener('error', handleVideoError);
+            
+            // Try to play the video
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.error('Video play failed:', error);
+                });
+            }
+        }
+
+        function handleVideoEnd() {
+            console.log('Video ended, redirecting to bigfoot.dev');
+            window.location.href = 'https://bigfoot.dev';
+        }
+
+        function handleVideoError() {
+            console.error('Video error occurred');
         }
 
         function showImage() {
@@ -62,6 +84,12 @@
             video.style.display = 'none';
             image.style.display = 'block';
         }
+
+        // Ensure video is loaded when page loads
+        window.addEventListener('load', function() {
+            const video = document.getElementById('motylVideo');
+            video.load();
+        });
     </script>
 </body>
 </html>
