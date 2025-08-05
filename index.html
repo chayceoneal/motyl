@@ -39,18 +39,44 @@
     </video>
 
     <script>
+        // Browser detection and MOV support check
+        function supportsMOV() {
+            const video = document.createElement('video');
+            return video.canPlayType && video.canPlayType('video/quicktime').replace(/no/, '');
+        }
+
+        function isSafari() {
+            return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        }
+
         function playVideo() {
             const image = document.getElementById('motylImage');
             const video = document.getElementById('motylVideo');
             
-            image.style.display = 'none';
-            video.style.display = 'block';
-            video.play();
-            
-            // When video ends, redirect to bigfoot.dev
-            video.addEventListener('ended', function() {
+            // Check if browser supports MOV or is Safari
+            if (supportsMOV() || isSafari()) {
+                // Browser supports MOV, play the video
+                image.style.display = 'none';
+                video.style.display = 'block';
+                
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.error('Video play failed:', error);
+                        // If video fails to play, redirect to bigfoot.dev
+                        window.location.href = 'https://bigfoot.dev';
+                    });
+                }
+                
+                // When video ends, redirect to bigfoot.dev
+                video.addEventListener('ended', function() {
+                    window.location.href = 'https://bigfoot.dev';
+                });
+            } else {
+                // Browser doesn't support MOV, redirect directly
+                console.log('Browser does not support MOV video, redirecting to bigfoot.dev');
                 window.location.href = 'https://bigfoot.dev';
-            });
+            }
         }
 
         function showImage() {
