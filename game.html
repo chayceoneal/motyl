@@ -7,30 +7,13 @@
     <style>
         body {
             margin: 0;
-            padding: 10px;
-            background-color: #f0f8ff;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
+            overflow: hidden;
+            background: #e0f7fa;
+            font-family: sans-serif;
         }
         canvas {
-            max-width: 100%;
-            max-height: 70vh;
-            width: auto;
-            height: auto;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 1.5rem;
-        }
-        .game-info {
-            margin-bottom: 15px;
-            text-align: center;
-            font-size: 0.9rem;
+            display: block;
+            background: #a7ffeb;
         }
         .back-button {
             position: fixed;
@@ -48,37 +31,11 @@
         .back-button:hover {
             background-color: #555;
         }
-        
-
-        
-        /* Responsive design */
-        @media (max-width: 768px) {
-            body {
-                padding: 5px;
-            }
-            h1 {
-                font-size: 1.2rem;
-                margin-bottom: 5px;
-            }
-            .game-info {
-                font-size: 0.8rem;
-                margin-bottom: 10px;
-            }
-            .back-button {
-                padding: 6px 12px;
-                font-size: 0.8rem;
-            }
-        }
     </style>
 </head>
 <body>
     <a href="index.html" class="back-button">← Back to motyl</a>
-    <h1>motylio</h1>
-    <div class="game-info">
-        <p>Use arrow keys or swipe to move the butterfly 🦋</p>
-        <p>Collect flowers 🌸 and avoid birds 🐦</p>
-    </div>
-    
+    <canvas id="game"></canvas>
     <script src="game.js"></script>
 </body>
 </html>
