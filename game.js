@@ -3,8 +3,8 @@
 // --- GAME CONSTANTS ---
 const GRID_SIZE = 16;
 const NUM_FLOWERS = 8;
-const NUM_BIRDS = 3;
-const NUM_OBSTACLES = 6; // Trees and rocks
+const NUM_BIRDS = 2;
+const NUM_OBSTACLES = 10; // Trees and rocks
 const BUTTERFLY_SPEED = 1;
 const BIRD_SPEED = 0.5; // birds move every 2 turns
 
@@ -160,12 +160,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const canvas = document.createElement("canvas");
   canvas.width = 480;
   canvas.height = 480;
-  canvas.style.border = '2px solid #333'; // Black border
   
-  // Make canvas responsive
+  // Make canvas responsive and larger for better touch interface
   function resizeCanvas() {
-    const maxWidth = Math.min(window.innerWidth - 40, 480);
-    const maxHeight = Math.min(window.innerHeight * 0.6, 480);
+    const maxWidth = Math.min(window.innerWidth - 20, 600);
+    const maxHeight = Math.min(window.innerHeight * 0.7, 600);
     const scale = Math.min(maxWidth / 480, maxHeight / 480);
     
     canvas.style.width = (480 * scale) + 'px';
