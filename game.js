@@ -212,10 +212,8 @@ function addMobileControls(canvas) {
   let startX, startY, endX, endY;
   let isSwiping = false;
   
-  // Touch events for swipe detection - prevent scrolling on the entire game area
-  const gameArea = document.querySelector('.game-area') || document.body;
-  
-  gameArea.addEventListener('touchstart', (e) => {
+  // Touch events for swipe detection
+  document.addEventListener('touchstart', (e) => {
     e.preventDefault();
     const touch = e.touches[0];
     startX = touch.clientX;
@@ -223,11 +221,11 @@ function addMobileControls(canvas) {
     isSwiping = true;
   }, { passive: false });
   
-  gameArea.addEventListener('touchmove', (e) => {
+  document.addEventListener('touchmove', (e) => {
     e.preventDefault();
   }, { passive: false });
   
-  gameArea.addEventListener('touchend', (e) => {
+  document.addEventListener('touchend', (e) => {
     e.preventDefault();
     if (!isSwiping) return;
     
