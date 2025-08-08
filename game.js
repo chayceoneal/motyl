@@ -109,6 +109,9 @@ function drawGame(ctx) {
   console.log("Drawing game with butterfly at:", gameState.butterfly);
   ctx.clearRect(0, 0, 640, 640);
 
+  // Set font size for better visibility on mobile
+  ctx.font = "16px Arial";
+
   // Draw obstacles (trees and rocks)
   gameState.obstacles.forEach((obstacle, index) => {
     // Alternate between trees and rocks
@@ -153,6 +156,22 @@ document.addEventListener("DOMContentLoaded", () => {
   canvas.height = 640;
   canvas.style.border = '2px solid #333'; // Black border
   
+  // Make canvas responsive
+  function resizeCanvas() {
+    const maxWidth = Math.min(window.innerWidth - 40, 640);
+    const maxHeight = Math.min(window.innerHeight * 0.7, 640);
+    const scale = Math.min(maxWidth / 640, maxHeight / 640);
+    
+    canvas.style.width = (640 * scale) + 'px';
+    canvas.style.height = (640 * scale) + 'px';
+  }
+  
+  // Initial resize
+  resizeCanvas();
+  
+  // Resize on window resize
+  window.addEventListener('resize', resizeCanvas);
+  
   // Find the game-info div and insert canvas after it
   const gameInfo = document.querySelector('.game-info');
   if (gameInfo) {
@@ -175,5 +194,45 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   console.log("Adding keyboard listener...");
   document.addEventListener("keydown", handleInput);
+  
+  // Add mobile controls
+  console.log("Adding mobile controls...");
+  addMobileControls(canvas);
+  
   console.log("Game setup complete!");
 });
+
+// --- MOBILE CONTROLS ---
+function addMobileControls(canvas) {
+  const controlButtons = document.querySelectorAll('.control-btn');
+  
+  controlButtons.forEach(button => {
+    // Handle touch events
+    button.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      const direction = button.getAttribute('data-direction');
+      moveButterfly(direction);
+      drawGame(canvas.getContext('2d'));
+      
+      if (gameState.gameOver) {
+        alert("Game Over! Score: " + gameState.score);
+      } else if (gameState.flowers.length === 0) {
+        alert("You win! Score: " + gameState.score);
+      }
+    });
+    
+    // Handle mouse events for testing
+    button.addEventListener('click', (e) => {
+      e.preventDefault();
+      const direction = button.getAttribute('data-direction');
+      moveButterfly(direction);
+      drawGame(canvas.getContext('2d'));
+      
+      if (gameState.gameOver) {
+        alert("Game Over! Score: " + gameState.score);
+      } else if (gameState.flowers.length === 0) {
+        alert("You win! Score: " + gameState.score);
+      }
+    });
+  });
+}
