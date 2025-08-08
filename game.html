@@ -61,29 +61,44 @@
         .control-row {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin: 5px 0;
+            gap: 15px;
+            margin: 8px 0;
         }
         .control-btn {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             background-color: #333;
             color: white;
             border: none;
             border-radius: 50%;
-            font-size: 24px;
+            font-size: 28px;
             cursor: pointer;
             touch-action: manipulation;
             user-select: none;
             -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            transition: all 0.1s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-        .control-btn:active {
+        .control-btn:active,
+        .control-btn:focus {
             background-color: #555;
             transform: scale(0.95);
+            outline: none;
         }
         
         /* Show mobile controls on touch devices */
         @media (hover: none) and (pointer: coarse) {
+            .mobile-controls {
+                display: block;
+            }
+            .game-info p:first-child {
+                display: none;
+            }
+        }
+        
+        /* Also show on smaller screens */
+        @media (max-width: 768px) {
             .mobile-controls {
                 display: block;
             }
