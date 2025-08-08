@@ -3,8 +3,8 @@
 // --- GAME CONSTANTS ---
 const GRID_SIZE = 16;
 const NUM_FLOWERS = 8;
-const NUM_BIRDS = 3;
-const NUM_OBSTACLES = 6; // Trees and rocks
+const NUM_BIRDS = 2;
+const NUM_OBSTACLES = 10; // Trees and rocks
 const BUTTERFLY_SPEED = 1;
 const BIRD_SPEED = 0.5; // birds move every 2 turns
 
@@ -160,12 +160,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const canvas = document.createElement("canvas");
   canvas.width = 480;
   canvas.height = 480;
-  canvas.style.border = '2px solid #333'; // Black border
   
-  // Make canvas responsive
+  // Make canvas responsive and larger for better touch interface
   function resizeCanvas() {
-    const maxWidth = Math.min(window.innerWidth - 40, 480);
-    const maxHeight = Math.min(window.innerHeight * 0.6, 480);
+    const maxWidth = Math.min(window.innerWidth - 20, 600);
+    const maxHeight = Math.min(window.innerHeight * 0.7, 600);
     const scale = Math.min(maxWidth / 480, maxHeight / 480);
     
     canvas.style.width = (480 * scale) + 'px';
@@ -178,13 +177,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // Resize on window resize
   window.addEventListener('resize', resizeCanvas);
   
-  // Find the game-info div and insert canvas after it
-  const gameInfo = document.querySelector('.game-info');
-  if (gameInfo) {
-    console.log("Found game-info div, inserting canvas after it");
-    gameInfo.parentNode.insertBefore(canvas, gameInfo.nextSibling);
+  // Find the game-area div and insert canvas into it
+  const gameArea = document.querySelector('.game-area');
+  if (gameArea) {
+    console.log("Found game-area div, inserting canvas into it");
+    gameArea.appendChild(canvas);
   } else {
-    console.log("Game-info div not found, appending canvas to body");
+    console.log("Game-area div not found, appending canvas to body");
     document.body.appendChild(canvas);
   }
 
@@ -213,8 +212,10 @@ function addMobileControls(canvas) {
   let startX, startY, endX, endY;
   let isSwiping = false;
   
-  // Touch events for swipe detection
-  canvas.addEventListener('touchstart', (e) => {
+  // Touch events for swipe detection - prevent scrolling on the entire game area
+  const gameArea = document.querySelector('.game-area') || document.body;
+  
+  gameArea.addEventListener('touchstart', (e) => {
     e.preventDefault();
     const touch = e.touches[0];
     startX = touch.clientX;
@@ -222,11 +223,11 @@ function addMobileControls(canvas) {
     isSwiping = true;
   }, { passive: false });
   
-  canvas.addEventListener('touchmove', (e) => {
+  gameArea.addEventListener('touchmove', (e) => {
     e.preventDefault();
   }, { passive: false });
   
-  canvas.addEventListener('touchend', (e) => {
+  gameArea.addEventListener('touchend', (e) => {
     e.preventDefault();
     if (!isSwiping) return;
     
