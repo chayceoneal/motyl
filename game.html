@@ -7,40 +7,108 @@
     <style>
         body {
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             background-color: #f0f8ff;
             font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
         }
         canvas {
             border: 2px solid #333;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            max-width: 100%;
+            max-height: 70vh;
+            width: auto;
+            height: auto;
         }
         h1 {
             color: #333;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
         }
         .game-info {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             text-align: center;
+            font-size: 0.9rem;
         }
         .back-button {
             position: fixed;
-            top: 20px;
-            left: 20px;
-            padding: 10px 20px;
+            top: 10px;
+            left: 10px;
+            padding: 8px 16px;
             background-color: #333;
             color: white;
             text-decoration: none;
             border-radius: 5px;
             transition: background-color 0.3s;
+            font-size: 0.9rem;
+            z-index: 1000;
         }
         .back-button:hover {
             background-color: #555;
+        }
+        
+        /* Mobile Controls */
+        .mobile-controls {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .control-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 5px 0;
+        }
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .control-btn:active {
+            background-color: #555;
+            transform: scale(0.95);
+        }
+        
+        /* Show mobile controls on touch devices */
+        @media (hover: none) and (pointer: coarse) {
+            .mobile-controls {
+                display: block;
+            }
+            .game-info p:first-child {
+                display: none;
+            }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            h1 {
+                font-size: 1.2rem;
+                margin-bottom: 5px;
+            }
+            .game-info {
+                font-size: 0.8rem;
+                margin-bottom: 10px;
+            }
+            .back-button {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
@@ -51,6 +119,19 @@
         <p>Use arrow keys to move the butterfly 🦋</p>
         <p>Collect flowers 🌸 and avoid birds 🐦</p>
     </div>
+    
+    <!-- Mobile Controls -->
+    <div class="mobile-controls">
+        <div class="control-row">
+            <button class="control-btn" data-direction="up">⬆️</button>
+        </div>
+        <div class="control-row">
+            <button class="control-btn" data-direction="left">⬅️</button>
+            <button class="control-btn" data-direction="down">⬇️</button>
+            <button class="control-btn" data-direction="right">➡️</button>
+        </div>
+    </div>
+    
     <script src="game.js"></script>
 </body>
 </html>
