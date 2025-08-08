@@ -13,6 +13,7 @@
             height: 100vh;
             margin: 0;
             background-color: #fff;
+            position: relative;
         }
         img, video {
             max-width: 100%;
@@ -29,9 +30,82 @@
         #motylImage {
             display: block;
         }
+        
+        /* Hamburger Menu Styles */
+        .hamburger-menu {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            cursor: pointer;
+        }
+        
+        .hamburger-icon {
+            width: 30px;
+            height: 25px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .hamburger-icon span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: #000;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+            min-width: 150px;
+        }
+        
+        .dropdown-menu.show {
+            display: block;
+        }
+        
+        .dropdown-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .dropdown-item:first-child {
+            border-radius: 4px 4px 0 0;
+        }
+        
+        .dropdown-item:last-child {
+            border-radius: 0 0 4px 4px;
+        }
     </style>
 </head>
 <body>
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu" onclick="toggleDropdown()">
+        <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="dropdown-menu" id="dropdownMenu">
+            <div class="dropdown-item" onclick="loadGame()">motylio</div>
+        </div>
+    </div>
+
     <img src="images/motyl.jpg" alt="motyl" id="motylImage" onclick="playVideo()">
     <video id="motylVideo" onclick="showImage()" muted>
         <source src="video/motyl.mov" type="video/quicktime">
@@ -87,6 +161,47 @@
             video.currentTime = 0;
             video.style.display = 'none';
             image.style.display = 'block';
+        }
+
+        // Hamburger menu functionality
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const hamburgerMenu = document.querySelector('.hamburger-menu');
+            const dropdown = document.getElementById('dropdownMenu');
+            
+            if (!hamburgerMenu.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        function loadGame() {
+            // First, play the video
+            const video = document.getElementById('motylVideo');
+            const image = document.getElementById('motylImage');
+            
+            // Hide the image and show video
+            image.style.display = 'none';
+            video.style.display = 'block';
+            
+            // Play the video
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    // When video ends, load the game
+                    video.addEventListener('ended', function() {
+                        window.location.href = 'game.html';
+                    }, { once: true });
+                }).catch(error => {
+                    console.error('Video play failed:', error);
+                    // If video fails to play, load game directly
+                    window.location.href = 'game.html';
+                });
+            }
         }
     </script>
 </body>
