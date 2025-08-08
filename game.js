@@ -177,13 +177,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // Resize on window resize
   window.addEventListener('resize', resizeCanvas);
   
-  // Find the game-info div and insert canvas after it
-  const gameInfo = document.querySelector('.game-info');
-  if (gameInfo) {
-    console.log("Found game-info div, inserting canvas after it");
-    gameInfo.parentNode.insertBefore(canvas, gameInfo.nextSibling);
+  // Find the game-area div and insert canvas into it
+  const gameArea = document.querySelector('.game-area');
+  if (gameArea) {
+    console.log("Found game-area div, inserting canvas into it");
+    gameArea.appendChild(canvas);
   } else {
-    console.log("Game-info div not found, appending canvas to body");
+    console.log("Game-area div not found, appending canvas to body");
     document.body.appendChild(canvas);
   }
 
@@ -212,8 +212,10 @@ function addMobileControls(canvas) {
   let startX, startY, endX, endY;
   let isSwiping = false;
   
-  // Touch events for swipe detection
-  canvas.addEventListener('touchstart', (e) => {
+  // Touch events for swipe detection - prevent scrolling on the entire game area
+  const gameArea = document.querySelector('.game-area') || document.body;
+  
+  gameArea.addEventListener('touchstart', (e) => {
     e.preventDefault();
     const touch = e.touches[0];
     startX = touch.clientX;
@@ -221,11 +223,11 @@ function addMobileControls(canvas) {
     isSwiping = true;
   }, { passive: false });
   
-  canvas.addEventListener('touchmove', (e) => {
+  gameArea.addEventListener('touchmove', (e) => {
     e.preventDefault();
   }, { passive: false });
   
-  canvas.addEventListener('touchend', (e) => {
+  gameArea.addEventListener('touchend', (e) => {
     e.preventDefault();
     if (!isSwiping) return;
     
