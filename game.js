@@ -1,10 +1,10 @@
 // Butterfly Game Logic and Instructions for Cursor
 
 // --- GAME CONSTANTS ---
-const GRID_SIZE = 32;
-const NUM_FLOWERS = 10;
-const NUM_BIRDS = 5;
-const NUM_OBSTACLES = 8; // Trees and rocks
+const GRID_SIZE = 16;
+const NUM_FLOWERS = 8;
+const NUM_BIRDS = 3;
+const NUM_OBSTACLES = 6; // Trees and rocks
 const BUTTERFLY_SPEED = 1;
 const BIRD_SPEED = 0.5; // birds move every 2 turns
 
@@ -107,31 +107,32 @@ function checkBirdCollision() {
 // --- UI HANDLER ---
 function drawGame(ctx) {
   console.log("Drawing game with butterfly at:", gameState.butterfly);
-  ctx.clearRect(0, 0, 640, 640);
+  ctx.clearRect(0, 0, 480, 480);
 
   // Detect if we're on mobile and set appropriate font size
   const isMobile = window.innerWidth <= 768 || ('ontouchstart' in window);
-  const fontSize = isMobile ? 32 : 16;
+  const fontSize = isMobile ? 48 : 24;
   ctx.font = `${fontSize}px Arial`;
 
-  // Calculate position offset based on font size
-  const offset = fontSize - 4;
+  // Calculate position offset and cell size based on font size
+  const offset = fontSize - 8;
+  const cellSize = 480 / GRID_SIZE; // 30px per cell
 
   // Draw obstacles (trees and rocks)
   gameState.obstacles.forEach((obstacle, index) => {
     // Alternate between trees and rocks
     const emoji = index % 2 === 0 ? "🌳" : "🪨";
-    ctx.fillText(emoji, obstacle.x * 20, obstacle.y * 20 + offset);
+    ctx.fillText(emoji, obstacle.x * cellSize, obstacle.y * cellSize + offset);
   });
 
   // Draw butterfly
-  ctx.fillText("🦋", gameState.butterfly.x * 20, gameState.butterfly.y * 20 + offset);
+  ctx.fillText("🦋", gameState.butterfly.x * cellSize, gameState.butterfly.y * cellSize + offset);
 
   // Draw flowers
-  gameState.flowers.forEach(f => ctx.fillText("🌸", f.x * 20, f.y * 20 + offset));
+  gameState.flowers.forEach(f => ctx.fillText("🌸", f.x * cellSize, f.y * cellSize + offset));
 
   // Draw birds
-  gameState.birds.forEach(b => ctx.fillText("🐦", b.x * 20, b.y * 20 + offset));
+  gameState.birds.forEach(b => ctx.fillText("🐦", b.x * cellSize, b.y * cellSize + offset));
 }
 
 function handleInput(e) {
@@ -157,18 +158,18 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Create canvas and add it to the page
   const canvas = document.createElement("canvas");
-  canvas.width = 640;
-  canvas.height = 640;
+  canvas.width = 480;
+  canvas.height = 480;
   canvas.style.border = '2px solid #333'; // Black border
   
   // Make canvas responsive
   function resizeCanvas() {
-    const maxWidth = Math.min(window.innerWidth - 40, 640);
-    const maxHeight = Math.min(window.innerHeight * 0.7, 640);
-    const scale = Math.min(maxWidth / 640, maxHeight / 640);
+    const maxWidth = Math.min(window.innerWidth - 40, 480);
+    const maxHeight = Math.min(window.innerHeight * 0.6, 480);
+    const scale = Math.min(maxWidth / 480, maxHeight / 480);
     
-    canvas.style.width = (640 * scale) + 'px';
-    canvas.style.height = (640 * scale) + 'px';
+    canvas.style.width = (480 * scale) + 'px';
+    canvas.style.height = (480 * scale) + 'px';
   }
   
   // Initial resize
@@ -209,40 +210,112 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // --- MOBILE CONTROLS ---
 function addMobileControls(canvas) {
-  const controlButtons = document.querySelectorAll('.control-btn');
+  let startX, startY, endX, endY;
+  let isSwiping = false;
   
-  controlButtons.forEach(button => {
-    const handleButtonPress = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const direction = button.getAttribute('data-direction');
-      console.log('Button pressed:', direction);
-      
-      // Add visual feedback
-      button.style.transform = 'scale(0.9)';
-      setTimeout(() => {
-        button.style.transform = 'scale(1)';
-      }, 100);
-      
-      moveButterfly(direction);
-      drawGame(canvas.getContext('2d'));
-      
-      if (gameState.gameOver) {
-        alert("Game Over! Score: " + gameState.score);
-      } else if (gameState.flowers.length === 0) {
-        alert("You win! Score: " + gameState.score);
+  // Touch events for swipe detection
+  canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    startX = touch.clientX;
+    startY = touch.clientY;
+    isSwiping = true;
+  }, { passive: false });
+  
+  canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+  }, { passive: false });
+  
+  canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    if (!isSwiping) return;
+    
+    const touch = e.changedTouches[0];
+    endX = touch.clientX;
+    endY = touch.clientY;
+    
+    const deltaX = endX - startX;
+    const deltaY = endY - startY;
+    const minSwipeDistance = 30; // Minimum distance for a swipe
+    
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      // Horizontal swipe
+      if (Math.abs(deltaX) > minSwipeDistance) {
+        const direction = deltaX > 0 ? 'right' : 'left';
+        console.log('Swipe detected:', direction);
+        moveButterfly(direction);
+        drawGame(canvas.getContext('2d'));
+        
+        if (gameState.gameOver) {
+          alert("Game Over! Score: " + gameState.score);
+        } else if (gameState.flowers.length === 0) {
+          alert("You win! Score: " + gameState.score);
+        }
       }
-    };
+    } else {
+      // Vertical swipe
+      if (Math.abs(deltaY) > minSwipeDistance) {
+        const direction = deltaY > 0 ? 'down' : 'up';
+        console.log('Swipe detected:', direction);
+        moveButterfly(direction);
+        drawGame(canvas.getContext('2d'));
+        
+        if (gameState.gameOver) {
+          alert("Game Over! Score: " + gameState.score);
+        } else if (gameState.flowers.length === 0) {
+          alert("You win! Score: " + gameState.score);
+        }
+      }
+    }
     
-    // Handle touch events
-    button.addEventListener('touchstart', handleButtonPress, { passive: false });
+    isSwiping = false;
+  }, { passive: false });
+  
+  // Mouse events for testing on desktop
+  canvas.addEventListener('mousedown', (e) => {
+    startX = e.clientX;
+    startY = e.clientY;
+    isSwiping = true;
+  });
+  
+  canvas.addEventListener('mouseup', (e) => {
+    if (!isSwiping) return;
     
-    // Handle mouse events for testing
-    button.addEventListener('click', handleButtonPress);
+    endX = e.clientX;
+    endY = e.clientY;
     
-    // Prevent default touch behaviors
-    button.addEventListener('touchend', (e) => {
-      e.preventDefault();
-    });
+    const deltaX = endX - startX;
+    const deltaY = endY - startY;
+    const minSwipeDistance = 30;
+    
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (Math.abs(deltaX) > minSwipeDistance) {
+        const direction = deltaX > 0 ? 'right' : 'left';
+        console.log('Mouse swipe detected:', direction);
+        moveButterfly(direction);
+        drawGame(canvas.getContext('2d'));
+        
+        if (gameState.gameOver) {
+          alert("Game Over! Score: " + gameState.score);
+        } else if (gameState.flowers.length === 0) {
+          alert("You win! Score: " + gameState.score);
+        }
+      }
+    } else {
+      if (Math.abs(deltaY) > minSwipeDistance) {
+        const direction = deltaY > 0 ? 'down' : 'up';
+        console.log('Mouse swipe detected:', direction);
+        moveButterfly(direction);
+        drawGame(canvas.getContext('2d'));
+        
+        if (gameState.gameOver) {
+          alert("Game Over! Score: " + gameState.score);
+        } else if (gameState.flowers.length === 0) {
+          alert("You win! Score: " + gameState.score);
+        }
+      }
+    }
+    
+    isSwiping = false;
   });
 }
