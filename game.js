@@ -109,24 +109,29 @@ function drawGame(ctx) {
   console.log("Drawing game with butterfly at:", gameState.butterfly);
   ctx.clearRect(0, 0, 640, 640);
 
-  // Set font size for better visibility on mobile
-  ctx.font = "16px Arial";
+  // Detect if we're on mobile and set appropriate font size
+  const isMobile = window.innerWidth <= 768 || ('ontouchstart' in window);
+  const fontSize = isMobile ? 32 : 16;
+  ctx.font = `${fontSize}px Arial`;
+
+  // Calculate position offset based on font size
+  const offset = fontSize - 4;
 
   // Draw obstacles (trees and rocks)
   gameState.obstacles.forEach((obstacle, index) => {
     // Alternate between trees and rocks
     const emoji = index % 2 === 0 ? "🌳" : "🪨";
-    ctx.fillText(emoji, obstacle.x * 20, obstacle.y * 20 + 16);
+    ctx.fillText(emoji, obstacle.x * 20, obstacle.y * 20 + offset);
   });
 
   // Draw butterfly
-  ctx.fillText("🦋", gameState.butterfly.x * 20, gameState.butterfly.y * 20 + 16);
+  ctx.fillText("🦋", gameState.butterfly.x * 20, gameState.butterfly.y * 20 + offset);
 
   // Draw flowers
-  gameState.flowers.forEach(f => ctx.fillText("🌸", f.x * 20, f.y * 20 + 16));
+  gameState.flowers.forEach(f => ctx.fillText("🌸", f.x * 20, f.y * 20 + offset));
 
   // Draw birds
-  gameState.birds.forEach(b => ctx.fillText("🐦", b.x * 20, b.y * 20 + 16));
+  gameState.birds.forEach(b => ctx.fillText("🐦", b.x * 20, b.y * 20 + offset));
 }
 
 function handleInput(e) {
@@ -207,10 +212,18 @@ function addMobileControls(canvas) {
   const controlButtons = document.querySelectorAll('.control-btn');
   
   controlButtons.forEach(button => {
-    // Handle touch events
-    button.addEventListener('touchstart', (e) => {
+    const handleButtonPress = (e) => {
       e.preventDefault();
+      e.stopPropagation();
       const direction = button.getAttribute('data-direction');
+      console.log('Button pressed:', direction);
+      
+      // Add visual feedback
+      button.style.transform = 'scale(0.9)';
+      setTimeout(() => {
+        button.style.transform = 'scale(1)';
+      }, 100);
+      
       moveButterfly(direction);
       drawGame(canvas.getContext('2d'));
       
@@ -219,20 +232,17 @@ function addMobileControls(canvas) {
       } else if (gameState.flowers.length === 0) {
         alert("You win! Score: " + gameState.score);
       }
-    });
+    };
+    
+    // Handle touch events
+    button.addEventListener('touchstart', handleButtonPress, { passive: false });
     
     // Handle mouse events for testing
-    button.addEventListener('click', (e) => {
+    button.addEventListener('click', handleButtonPress);
+    
+    // Prevent default touch behaviors
+    button.addEventListener('touchend', (e) => {
       e.preventDefault();
-      const direction = button.getAttribute('data-direction');
-      moveButterfly(direction);
-      drawGame(canvas.getContext('2d'));
-      
-      if (gameState.gameOver) {
-        alert("Game Over! Score: " + gameState.score);
-      } else if (gameState.flowers.length === 0) {
-        alert("You win! Score: " + gameState.score);
-      }
     });
   });
 }
