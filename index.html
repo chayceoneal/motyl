@@ -180,27 +180,34 @@
         });
 
         function loadGame() {
-            // First, play the video
-            const video = document.getElementById('motylVideo');
-            const image = document.getElementById('motylImage');
-            
-            // Hide the image and show video
-            image.style.display = 'none';
-            video.style.display = 'block';
-            
-            // Play the video
-            const playPromise = video.play();
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    // When video ends, load the game
-                    video.addEventListener('ended', function() {
+            // Check if browser supports MOV or is Safari
+            if (supportsMOV() || isSafari()) {
+                // Browser supports MOV, play the video first
+                const video = document.getElementById('motylVideo');
+                const image = document.getElementById('motylImage');
+                
+                // Hide the image and show video
+                image.style.display = 'none';
+                video.style.display = 'block';
+                
+                // Play the video
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        // When video ends, load the game
+                        video.addEventListener('ended', function() {
+                            window.location.href = 'game.html';
+                        }, { once: true });
+                    }).catch(error => {
+                        console.error('Video play failed:', error);
+                        // If video fails to play, load game directly
                         window.location.href = 'game.html';
-                    }, { once: true });
-                }).catch(error => {
-                    console.error('Video play failed:', error);
-                    // If video fails to play, load game directly
-                    window.location.href = 'game.html';
-                });
+                    });
+                }
+            } else {
+                // Browser doesn't support MOV, jump straight to game
+                console.log('Browser does not support MOV video, jumping straight to game');
+                window.location.href = 'game.html';
             }
         }
     </script>
