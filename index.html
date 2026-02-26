@@ -137,19 +137,19 @@
                 if (playPromise !== undefined) {
                     playPromise.catch(error => {
                         console.error('Video play failed:', error);
-                        // If video fails to play, redirect to bigfoot.dev
-                        window.location.href = 'https://bigfoot.dev';
+                        // If video fails to play, redirect to on3al.org
+                        window.location.href = 'https://on3al.org';
                     });
                 }
                 
-                // When video ends, redirect to bigfoot.dev
+                // When video ends, redirect to on3al.org
                 video.addEventListener('ended', function() {
-                    window.location.href = 'https://bigfoot.dev';
+                    window.location.href = 'https://on3al.org';
                 });
             } else {
                 // Browser doesn't support MOV, redirect directly
-                console.log('Browser does not support MOV video, redirecting to bigfoot.dev');
-                window.location.href = 'https://bigfoot.dev';
+                console.log('Browser does not support MOV video, redirecting to on3al.org');
+                window.location.href = 'https://on3al.org';
             }
         }
 
